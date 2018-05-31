@@ -1,0 +1,239 @@
+package WordToVec;
+
+import Dictionary.TurkishWordComparator;
+import Dictionary.VectorizedDictionary;
+import Dictionary.VectorizedWord;
+import Math.*;
+import Corpus.Corpus;
+import Corpus.Sentence;
+
+import java.util.Random;
+
+public class NeuralNetwork {
+    private Matrix wordVectors, wordVectorUpdate;
+    private Vocabulary vocabulary;
+    private WordToVecParameter parameter;
+    private Corpus corpus;
+    private double expTable[];
+    private static int EXP_TABLE_SIZE = 1000;
+    private static int MAX_EXP = 6;
+
+    public NeuralNetwork(Corpus corpus, WordToVecParameter parameter){
+        this.vocabulary = new Vocabulary(corpus);
+        this.parameter = parameter;
+        this.corpus = corpus;
+        wordVectors = new Matrix(vocabulary.size(), parameter.getLayerSize(), -0.5, 0.5);
+        wordVectorUpdate = new Matrix(vocabulary.size(), parameter.getLayerSize());
+        prepareExpTable();
+    }
+
+    private void prepareExpTable(){
+        expTable = new double[EXP_TABLE_SIZE + 1];
+        for (int i = 0; i < EXP_TABLE_SIZE; i++) {
+            expTable[i] = Math.exp((i / (EXP_TABLE_SIZE + 0.0) * 2 - 1) * MAX_EXP);
+            expTable[i] = expTable[i] / (expTable[i] + 1);
+        }
+    }
+
+    public VectorizedDictionary train() throws MatrixColumnMismatch, VectorSizeMismatch {
+        VectorizedDictionary result = new VectorizedDictionary(new TurkishWordComparator());
+        if (parameter.isCbow()){
+            trainCbow();
+        } else {
+            trainSkipGram();
+        }
+        for (int i = 0; i < vocabulary.size(); i++){
+            result.addWord(new VectorizedWord(vocabulary.getWord(i).getName(), wordVectors.getRow(i)));
+        }
+        return result;
+    }
+
+    private double calculateG(double f, double alpha, double label){
+        if (f > MAX_EXP){
+            return (label - 1) * alpha;
+        } else {
+            if (f < -MAX_EXP){
+                return label * alpha;
+            } else {
+                return (label - expTable[(int) ((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))]) * alpha;
+            }
+        }
+    }
+
+    private class Iteration{
+        private int wordCount = 0, lastWordCount = 0, wordCountActual = 0;
+        private int iterationCount = 0;
+        private int sentencePosition = 0, sentenceIndex = 0;
+        private double startingAlpha = parameter.getAlpha(), alpha = parameter.getAlpha();
+
+        public Iteration(){
+        }
+
+        public void alphaUpdate(){
+            if (wordCount - lastWordCount > 10000) {
+                wordCountActual += wordCount - lastWordCount;
+                lastWordCount = wordCount;
+                alpha = startingAlpha * (1 - wordCountActual / (parameter.getNumberOfIterations() * corpus.numberOfWords() + 1.0));
+                if (alpha < startingAlpha * 0.0001)
+                    alpha = startingAlpha * 0.0001;
+            }
+        }
+
+        public Sentence sentenceUpdate(Sentence currentSentence){
+            sentencePosition++;
+            if (sentencePosition >= currentSentence.wordCount()) {
+                wordCount += currentSentence.wordCount();
+                sentenceIndex++;
+                sentencePosition = 0;
+                if (sentenceIndex == corpus.sentenceCount()){
+                    iterationCount++;
+                    wordCount = 0;
+                    lastWordCount = 0;
+                    sentenceIndex = 0;
+                    corpus.shuffleSentences(1);
+                }
+                return corpus.getSentence(sentenceIndex);
+            }
+            return currentSentence;
+        }
+    }
+
+    private void trainCbow() throws VectorSizeMismatch, MatrixColumnMismatch {
+        int wordIndex, lastWordIndex;
+        Iteration iteration = new Iteration();
+        int target, label, l2, b, cw;
+        double f, g;
+        Sentence currentSentence = corpus.getSentence(iteration.sentenceIndex);
+        VocabularyWord currentWord;
+        Random random = new Random();
+        Vector outputs = new Vector(parameter.getLayerSize(), 0);
+        Vector outputUpdate = new Vector(parameter.getLayerSize(), 0);
+        corpus.shuffleSentences(1);
+        while (iteration.iterationCount < parameter.getNumberOfIterations()) {
+            iteration.alphaUpdate();
+            wordIndex = vocabulary.getPosition(currentSentence.getWord(iteration.sentencePosition));
+            currentWord = vocabulary.getWord(wordIndex);
+            outputs.clear();
+            outputUpdate.clear();
+            b = random.nextInt(parameter.getWindow());
+            cw = 0;
+            for (int a = b; a < parameter.getWindow() * 2 + 1 - b; a++){
+                int c = iteration.sentencePosition - parameter.getWindow() + a;
+                if (a != parameter.getWindow() && currentSentence.safeIndex(c)) {
+                    lastWordIndex = vocabulary.getPosition(currentSentence.getWord(c));
+                    outputs.add(wordVectors.getRow(lastWordIndex));
+                    cw++;
+                }
+            }
+            if (cw > 0) {
+                outputs.divide(cw);
+                if (parameter.isHierarchicalSoftMax()){
+                    for (int d = 0; d < currentWord.getCodeLength(); d++) {
+                        l2 = currentWord.getPoint(d);
+                        f = outputs.dotProduct(wordVectorUpdate.getRow(l2));
+                        if (f <= -MAX_EXP || f >= MAX_EXP){
+                            continue;
+                        } else{
+                            f = expTable[(int)((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))];
+                        }
+                        g = (1 - currentWord.getCode(d) - f) * iteration.alpha;
+                        outputUpdate.add(wordVectorUpdate.getRow(l2).product(g));
+                        wordVectorUpdate.add(l2, outputs.product(g));
+                    }
+                } else {
+                    for (int d = 0; d < parameter.getNegativeSamplingSize() + 1; d++) {
+                        if (d == 0) {
+                            target = wordIndex;
+                            label = 1;
+                        } else {
+                            target = vocabulary.getTableValue(random.nextInt(vocabulary.getTableSize()));
+                            if (target == 0)
+                                target = random.nextInt(vocabulary.size() - 1) + 1;
+                            if (target == wordIndex)
+                                continue;
+                            label = 0;
+                        }
+                        l2 = target;
+                        f = outputs.dotProduct(wordVectorUpdate.getRow(l2));
+                        g = calculateG(f, iteration.alpha, label);
+                        outputUpdate.add(wordVectorUpdate.getRow(l2).product(g));
+                        wordVectorUpdate.add(l2, outputs.product(g));
+                    }
+                }
+                for (int a = b; a < parameter.getWindow() * 2 + 1 - b; a++){
+                    int c = iteration.sentencePosition - parameter.getWindow() + a;
+                    if (a != parameter.getWindow() && currentSentence.safeIndex(c)) {
+                        lastWordIndex = vocabulary.getPosition(currentSentence.getWord(c));
+                        wordVectors.add(lastWordIndex, outputUpdate);
+                    }
+                }
+            }
+            currentSentence = iteration.sentenceUpdate(currentSentence);
+        }
+    }
+
+    private void trainSkipGram() throws VectorSizeMismatch, MatrixColumnMismatch {
+        int wordIndex, lastWordIndex;
+        Iteration iteration = new Iteration();
+        int target, label, l1, l2, b;
+        double f, g;
+        Sentence currentSentence = corpus.getSentence(iteration.sentenceIndex);
+        VocabularyWord currentWord;
+        Random random = new Random();
+        Vector outputs = new Vector(parameter.getLayerSize(), 0);
+        Vector outputUpdate = new Vector(parameter.getLayerSize(), 0);
+        corpus.shuffleSentences(1);
+        while (iteration.iterationCount < parameter.getNumberOfIterations()) {
+            iteration.alphaUpdate();
+            wordIndex = vocabulary.getPosition(currentSentence.getWord(iteration.sentencePosition));
+            currentWord = vocabulary.getWord(wordIndex);
+            outputs.clear();
+            outputUpdate.clear();
+            b = random.nextInt(parameter.getWindow());
+            for (int a = b; a < parameter.getWindow() * 2 + 1 - b; a++) {
+                int c = iteration.sentencePosition - parameter.getWindow() + a;
+                if (a != parameter.getWindow() && currentSentence.safeIndex(c)) {
+                    lastWordIndex = vocabulary.getPosition(currentSentence.getWord(c));
+                    l1 = lastWordIndex;
+                    outputUpdate.clear();
+                    if (parameter.isHierarchicalSoftMax()) {
+                        for (int d = 0; d < currentWord.getCodeLength(); d++) {
+                            l2 = currentWord.getPoint(d);
+                            f = wordVectors.getRow(l1).dotProduct(wordVectorUpdate.getRow(l2));
+                            if (f <= -MAX_EXP || f >= MAX_EXP){
+                                continue;
+                            } else{
+                                f = expTable[(int)((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))];
+                            }
+                            g = (1 - currentWord.getCode(d) - f) * iteration.alpha;
+                            outputUpdate.add(wordVectorUpdate.getRow(l2).product(g));
+                            wordVectorUpdate.add(l2, wordVectors.getRow(l1).product(g));
+                        }
+                    } else {
+                        for (int d = 0; d < parameter.getNegativeSamplingSize() + 1; d++) {
+                            if (d == 0) {
+                                target = wordIndex;
+                                label = 1;
+                            } else {
+                                target = vocabulary.getTableValue(random.nextInt(vocabulary.getTableSize()));
+                                if (target == 0)
+                                    target = random.nextInt(vocabulary.size() - 1) + 1;
+                                if (target == wordIndex)
+                                    continue;
+                                label = 0;
+                            }
+                            l2 = target;
+                            f = wordVectors.getRow(l1).dotProduct(wordVectorUpdate.getRow(l2));
+                            g = calculateG(f, iteration.alpha, label);
+                            outputUpdate.add(wordVectorUpdate.getRow(l2).product(g));
+                            wordVectorUpdate.add(l2, wordVectors.getRow(l1).product(g));
+                        }
+                    }
+                    wordVectors.add(l1, outputUpdate);
+                }
+            }
+            currentSentence = iteration.sentenceUpdate(currentSentence);
+        }
+    }
+
+}
