@@ -1,9 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="WordToVec:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/WordToVec_jar</output-path>
-    <root id="archive" name="WordToVec.jar">
-      <element id="module-output" name="WordToVec" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/src/libs/Corpus.jar" path-in-jar="/" />
-    </root>
-  </artifact>
-</component>

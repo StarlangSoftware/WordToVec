@@ -53,3 +53,5 @@ nb-configuration.xml
 release.properties
 pom.xml.releaseBackup
 pom.xml.tag
+out/artifacts/WordToVec_jar/WordToVec.jar
+out/production/WordToVec/libs/Corpus.jar
