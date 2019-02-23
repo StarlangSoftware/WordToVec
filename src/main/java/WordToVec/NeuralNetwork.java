@@ -60,65 +60,27 @@ public class NeuralNetwork {
         }
     }
 
-    private class Iteration{
-        private int wordCount = 0, lastWordCount = 0, wordCountActual = 0;
-        private int iterationCount = 0;
-        private int sentencePosition = 0, sentenceIndex = 0;
-        private double startingAlpha = parameter.getAlpha(), alpha = parameter.getAlpha();
-
-        public Iteration(){
-        }
-
-        public void alphaUpdate(){
-            if (wordCount - lastWordCount > 10000) {
-                wordCountActual += wordCount - lastWordCount;
-                lastWordCount = wordCount;
-                alpha = startingAlpha * (1 - wordCountActual / (parameter.getNumberOfIterations() * corpus.numberOfWords() + 1.0));
-                if (alpha < startingAlpha * 0.0001)
-                    alpha = startingAlpha * 0.0001;
-            }
-        }
-
-        public Sentence sentenceUpdate(Sentence currentSentence){
-            sentencePosition++;
-            if (sentencePosition >= currentSentence.wordCount()) {
-                wordCount += currentSentence.wordCount();
-                sentenceIndex++;
-                sentencePosition = 0;
-                if (sentenceIndex == corpus.sentenceCount()){
-                    iterationCount++;
-                    wordCount = 0;
-                    lastWordCount = 0;
-                    sentenceIndex = 0;
-                    corpus.shuffleSentences(1);
-                }
-                return corpus.getSentence(sentenceIndex);
-            }
-            return currentSentence;
-        }
-    }
-
     private void trainCbow() throws VectorSizeMismatch, MatrixColumnMismatch {
         int wordIndex, lastWordIndex;
-        Iteration iteration = new Iteration();
+        Iteration iteration = new Iteration(corpus, parameter);
         int target, label, l2, b, cw;
         double f, g;
-        Sentence currentSentence = corpus.getSentence(iteration.sentenceIndex);
+        Sentence currentSentence = corpus.getSentence(iteration.getSentenceIndex());
         VocabularyWord currentWord;
         Random random = new Random();
         Vector outputs = new Vector(parameter.getLayerSize(), 0);
         Vector outputUpdate = new Vector(parameter.getLayerSize(), 0);
         corpus.shuffleSentences(1);
-        while (iteration.iterationCount < parameter.getNumberOfIterations()) {
+        while (iteration.getIterationCount() < parameter.getNumberOfIterations()) {
             iteration.alphaUpdate();
-            wordIndex = vocabulary.getPosition(currentSentence.getWord(iteration.sentencePosition));
+            wordIndex = vocabulary.getPosition(currentSentence.getWord(iteration.getSentencePosition()));
             currentWord = vocabulary.getWord(wordIndex);
             outputs.clear();
             outputUpdate.clear();
             b = random.nextInt(parameter.getWindow());
             cw = 0;
             for (int a = b; a < parameter.getWindow() * 2 + 1 - b; a++){
-                int c = iteration.sentencePosition - parameter.getWindow() + a;
+                int c = iteration.getSentencePosition() - parameter.getWindow() + a;
                 if (a != parameter.getWindow() && currentSentence.safeIndex(c)) {
                     lastWordIndex = vocabulary.getPosition(currentSentence.getWord(c));
                     outputs.add(wordVectors.getRow(lastWordIndex));
@@ -136,7 +98,7 @@ public class NeuralNetwork {
                         } else{
                             f = expTable[(int)((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))];
                         }
-                        g = (1 - currentWord.getCode(d) - f) * iteration.alpha;
+                        g = (1 - currentWord.getCode(d) - f) * iteration.getAlpha();
                         outputUpdate.add(wordVectorUpdate.getRow(l2).product(g));
                         wordVectorUpdate.add(l2, outputs.product(g));
                     }
@@ -155,13 +117,13 @@ public class NeuralNetwork {
                         }
                         l2 = target;
                         f = outputs.dotProduct(wordVectorUpdate.getRow(l2));
-                        g = calculateG(f, iteration.alpha, label);
+                        g = calculateG(f, iteration.getAlpha(), label);
                         outputUpdate.add(wordVectorUpdate.getRow(l2).product(g));
                         wordVectorUpdate.add(l2, outputs.product(g));
                     }
                 }
                 for (int a = b; a < parameter.getWindow() * 2 + 1 - b; a++){
-                    int c = iteration.sentencePosition - parameter.getWindow() + a;
+                    int c = iteration.getSentencePosition() - parameter.getWindow() + a;
                     if (a != parameter.getWindow() && currentSentence.safeIndex(c)) {
                         lastWordIndex = vocabulary.getPosition(currentSentence.getWord(c));
                         wordVectors.add(lastWordIndex, outputUpdate);
@@ -174,24 +136,24 @@ public class NeuralNetwork {
 
     private void trainSkipGram() throws VectorSizeMismatch, MatrixColumnMismatch {
         int wordIndex, lastWordIndex;
-        Iteration iteration = new Iteration();
+        Iteration iteration = new Iteration(corpus, parameter);
         int target, label, l1, l2, b;
         double f, g;
-        Sentence currentSentence = corpus.getSentence(iteration.sentenceIndex);
+        Sentence currentSentence = corpus.getSentence(iteration.getSentenceIndex());
         VocabularyWord currentWord;
         Random random = new Random();
         Vector outputs = new Vector(parameter.getLayerSize(), 0);
         Vector outputUpdate = new Vector(parameter.getLayerSize(), 0);
         corpus.shuffleSentences(1);
-        while (iteration.iterationCount < parameter.getNumberOfIterations()) {
+        while (iteration.getIterationCount() < parameter.getNumberOfIterations()) {
             iteration.alphaUpdate();
-            wordIndex = vocabulary.getPosition(currentSentence.getWord(iteration.sentencePosition));
+            wordIndex = vocabulary.getPosition(currentSentence.getWord(iteration.getSentencePosition()));
             currentWord = vocabulary.getWord(wordIndex);
             outputs.clear();
             outputUpdate.clear();
             b = random.nextInt(parameter.getWindow());
             for (int a = b; a < parameter.getWindow() * 2 + 1 - b; a++) {
-                int c = iteration.sentencePosition - parameter.getWindow() + a;
+                int c = iteration.getSentencePosition() - parameter.getWindow() + a;
                 if (a != parameter.getWindow() && currentSentence.safeIndex(c)) {
                     lastWordIndex = vocabulary.getPosition(currentSentence.getWord(c));
                     l1 = lastWordIndex;
@@ -205,7 +167,7 @@ public class NeuralNetwork {
                             } else{
                                 f = expTable[(int)((f + MAX_EXP) * (EXP_TABLE_SIZE / MAX_EXP / 2))];
                             }
-                            g = (1 - currentWord.getCode(d) - f) * iteration.alpha;
+                            g = (1 - currentWord.getCode(d) - f) * iteration.getAlpha();
                             outputUpdate.add(wordVectorUpdate.getRow(l2).product(g));
                             wordVectorUpdate.add(l2, wordVectors.getRow(l1).product(g));
                         }
@@ -224,7 +186,7 @@ public class NeuralNetwork {
                             }
                             l2 = target;
                             f = wordVectors.getRow(l1).dotProduct(wordVectorUpdate.getRow(l2));
-                            g = calculateG(f, iteration.alpha, label);
+                            g = calculateG(f, iteration.getAlpha(), label);
                             outputUpdate.add(wordVectorUpdate.getRow(l2).product(g));
                             wordVectorUpdate.add(l2, wordVectors.getRow(l1).product(g));
                         }
