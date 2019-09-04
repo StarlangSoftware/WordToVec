@@ -14,7 +14,7 @@ public class NeuralNetwork {
     private Vocabulary vocabulary;
     private WordToVecParameter parameter;
     private Corpus corpus;
-    private double expTable[];
+    private double[] expTable;
     private static int EXP_TABLE_SIZE = 1000;
     private static int MAX_EXP = 6;
 

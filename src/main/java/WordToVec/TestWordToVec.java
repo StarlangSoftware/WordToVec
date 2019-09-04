@@ -97,7 +97,7 @@ public class TestWordToVec {
             inFile = new FileInputStream(fileName);
             inObject = new ObjectInputStream(inFile);
             dictionary = (VectorizedDictionary) inObject.readObject();
-            ArrayList clusters[] = dictionary.kMeansClustering(10, k);
+            ArrayList[] clusters = dictionary.kMeansClustering(10, k);
             for (int i = 0; i < k; i++){
                 System.out.println("CLUSTER " + (i + 1));
                 System.out.println("---------------------------------");

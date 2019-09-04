@@ -10,7 +10,7 @@ import Dictionary.Word;
 
 public class Vocabulary {
     private ArrayList<VocabularyWord> vocabulary;
-    private int table[];
+    private int[] table;
 
     /**
      * Constructor for the {@link Vocabulary} class. For each distinct word in the corpus, a {@link VocabularyWord}
@@ -62,11 +62,11 @@ public class Vocabulary {
      */
     private void constructHuffmanTree(){
         int min1i, min2i, b, i;
-        int count[] = new int[vocabulary.size() * 2 + 1];
-        int code[] = new int[VocabularyWord.MAX_CODE_LENGTH];
-        int point[] = new int[VocabularyWord.MAX_CODE_LENGTH];
-        int binary[] = new int[vocabulary.size() * 2 + 1];
-        int parentNode[] = new int[vocabulary.size() * 2 + 1];
+        int[] count = new int[vocabulary.size() * 2 + 1];
+        int[] code = new int[VocabularyWord.MAX_CODE_LENGTH];
+        int[] point = new int[VocabularyWord.MAX_CODE_LENGTH];
+        int[] binary = new int[vocabulary.size() * 2 + 1];
+        int[] parentNode = new int[vocabulary.size() * 2 + 1];
         for (int a = 0; a < vocabulary.size(); a++)
             count[a] = vocabulary.get(a).getCount();
         for (int a = vocabulary.size(); a < vocabulary.size() * 2; a++)
@@ -131,8 +131,8 @@ public class Vocabulary {
         double total = 0;
         double d1;
         table = new int[2 * vocabulary.size()];
-        for (int a = 0; a < vocabulary.size(); a++){
-            total += Math.pow(vocabulary.get(a).getCount(), 0.75);
+        for (VocabularyWord vocabularyWord : vocabulary) {
+            total += Math.pow(vocabularyWord.getCount(), 0.75);
         }
         i = 0;
         d1 = Math.pow(vocabulary.get(i).getCount(), 0.75) / total;

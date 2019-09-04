@@ -32,15 +32,7 @@ public class VocabularyWord extends Word implements Comparable{
      */
     public int compareTo(Object o) {
         VocabularyWord word = (VocabularyWord) o;
-        if (count < word.count){
-            return 1;
-        } else {
-            if (count > word.count){
-                return -1;
-            } else {
-                return 0;
-            }
-        }
+        return Integer.compare(word.count, count);
     }
 
     /**
