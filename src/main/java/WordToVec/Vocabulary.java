@@ -12,6 +12,12 @@ public class Vocabulary {
     private ArrayList<VocabularyWord> vocabulary;
     private int table[];
 
+    /**
+     * Constructor for the {@link Vocabulary} class. For each distinct word in the corpus, a {@link VocabularyWord}
+     * instance is created. After that, words are sorted according to their occurences. Unigram table is constructed,
+     * whereafter Huffman tree is created based on the number of occurences of the words.
+     * @param corpus Corpus used to train word vectors using Word2Vec algorithm.
+     */
     public Vocabulary(Corpus corpus){
         Set<Word> wordList;
         wordList = corpus.getWordList();
@@ -25,18 +31,35 @@ public class Vocabulary {
         Collections.sort(vocabulary, new TurkishWordComparator());
     }
 
+    /**
+     * Returns number of words in the vocabulary.
+     * @return Number of words in the vocabulary.
+     */
     public int size(){
         return vocabulary.size();
     }
 
+    /**
+     * Searches a word and returns the position of that word in the vocabulary. Search is done using binary search.
+     * @param word Word to be searched.
+     * @return Position of the word searched.
+     */
     public int getPosition(Word word){
         return Collections.binarySearch(vocabulary, word, new TurkishWordComparator());
     }
 
+    /**
+     * Returns the word at a given index.
+     * @param index Index of the word.
+     * @return The word at a given index.
+     */
     public VocabularyWord getWord(int index){
         return vocabulary.get(index);
     }
 
+    /**
+     * Constructs Huffman Tree based on the number of occurences of the words.
+     */
     private void constructHuffmanTree(){
         int min1i, min2i, b, i;
         int count[] = new int[vocabulary.size() * 2 + 1];
@@ -100,6 +123,9 @@ public class Vocabulary {
         }
     }
 
+    /**
+     * Constructs the unigram table based on the number of occurences of the words.
+     */
     private void createUniGramTable(){
         int i;
         double total = 0;
@@ -121,10 +147,19 @@ public class Vocabulary {
         }
     }
 
+    /**
+     * Accessor for the unigram table.
+     * @param index Index of the word.
+     * @return Unigram table value at a given index.
+     */
     public int getTableValue(int index){
         return table[index];
     }
 
+    /**
+     * Returns size of the unigram table.
+     * @return Size of the unigram table.
+     */
     public int getTableSize(){
         return table.length;
     }

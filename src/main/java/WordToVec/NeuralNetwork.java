@@ -18,6 +18,13 @@ public class NeuralNetwork {
     private static int EXP_TABLE_SIZE = 1000;
     private static int MAX_EXP = 6;
 
+    /**
+     * Constructor for the {@link NeuralNetwork} class. Gets corpus and network parameters as input and sets the
+     * corresponding parameters first. After that, initializes the network with random weights between -0.5 and 0.5.
+     * Constructs vector update matrix and prepares the exp table.
+     * @param corpus Corpus used to train word vectors using Word2Vec algorithm.
+     * @param parameter Parameters of the Word2Vec algorithm.
+     */
     public NeuralNetwork(Corpus corpus, WordToVecParameter parameter){
         this.vocabulary = new Vocabulary(corpus);
         this.parameter = parameter;
@@ -27,6 +34,10 @@ public class NeuralNetwork {
         prepareExpTable();
     }
 
+    /**
+     * Constructs the fast exponentiation table. Instead of taking exponent at each time, the algorithm will lookup
+     * the table.
+     */
     private void prepareExpTable(){
         expTable = new double[EXP_TABLE_SIZE + 1];
         for (int i = 0; i < EXP_TABLE_SIZE; i++) {
@@ -35,6 +46,11 @@ public class NeuralNetwork {
         }
     }
 
+    /**
+     * Main method for training the Word2Vec algorithm. Depending on the training parameter, CBox or SkipGram algorithm
+     * is applied.
+     * @return Dictionary of word vectors.
+     */
     public VectorizedDictionary train() throws MatrixColumnMismatch, VectorSizeMismatch {
         VectorizedDictionary result = new VectorizedDictionary(new TurkishWordComparator());
         if (parameter.isCbow()){
@@ -48,6 +64,13 @@ public class NeuralNetwork {
         return result;
     }
 
+    /**
+     * Calculates G value in the Word2Vec algorithm.
+     * @param f F value.
+     * @param alpha Learning rate alpha.
+     * @param label Label of the instance.
+     * @return Calculated G value.
+     */
     private double calculateG(double f, double alpha, double label){
         if (f > MAX_EXP){
             return (label - 1) * alpha;
@@ -60,6 +83,9 @@ public class NeuralNetwork {
         }
     }
 
+    /**
+     * Main method for training the CBow version of Word2Vec algorithm.
+     */
     private void trainCbow() throws VectorSizeMismatch, MatrixColumnMismatch {
         int wordIndex, lastWordIndex;
         Iteration iteration = new Iteration(corpus, parameter);
@@ -134,6 +160,9 @@ public class NeuralNetwork {
         }
     }
 
+    /**
+     * Main method for training the SkipGram version of Word2Vec algorithm.
+     */
     private void trainSkipGram() throws VectorSizeMismatch, MatrixColumnMismatch {
         int wordIndex, lastWordIndex;
         Iteration iteration = new Iteration(corpus, parameter);
