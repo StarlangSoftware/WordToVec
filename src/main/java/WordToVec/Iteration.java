@@ -42,7 +42,7 @@ public class Iteration {
     }
 
     /**
-     * Acecessor for the sentenceIndex attribute.
+     * Accessor for the sentenceIndex attribute.
      * @return SentenceIndex attribute
      */
     public int getSentenceIndex() {
