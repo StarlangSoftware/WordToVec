@@ -13,7 +13,7 @@ public class VocabularyWord extends Word implements Comparable{
      * Constructor for a {@link VocabularyWord}. The constructor gets name and count values and sets the corresponding
      * attributes. It also initializes the code and point arrays for this word.
      * @param name Lemma of the word
-     * @param count Number of occurences of this word in the corpus
+     * @param count Number of occurrences of this word in the corpus
      */
     public VocabularyWord(String name, int count){
         super(name);
@@ -37,7 +37,7 @@ public class VocabularyWord extends Word implements Comparable{
 
     /**
      * Accessor for the count attribute.
-     * @return Number of occurences of this word.
+     * @return Number of occurrences of this word.
      */
     public int getCount(){
         return count;

@@ -14,8 +14,8 @@ public class Vocabulary {
 
     /**
      * Constructor for the {@link Vocabulary} class. For each distinct word in the corpus, a {@link VocabularyWord}
-     * instance is created. After that, words are sorted according to their occurences. Unigram table is constructed,
-     * whereafter Huffman tree is created based on the number of occurences of the words.
+     * instance is created. After that, words are sorted according to their occurrences. Unigram table is constructed,
+     * where after Huffman tree is created based on the number of occurrences of the words.
      * @param corpus Corpus used to train word vectors using Word2Vec algorithm.
      */
     public Vocabulary(Corpus corpus){
