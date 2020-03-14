@@ -84,19 +84,24 @@ Use below line to generate jar file:
 
      mvn install
 
-
-
-------------------------------------------------
-
-WordToVec
-============
-+ [Maven Usage](#maven-usage)
-
-
-### Maven Usage
+## Maven Usage
 
 	<dependency>
   	<groupId>NlpToolkit</groupId>
   	<artifactId>WordToVec</artifactId>
   	<version>1.0.0</version>
 	</dependency>
+
+
+------------------------------------------------
+
+Detailed Description
+============
+
+Yapay sinir ağını initialize etmek için
+
+	NeuralNetwork(Corpus corpus, WordToVecParameter parameter)
+
+Sinir ağını eğitmek için ise
+
+	VectorizedDictionary train()
