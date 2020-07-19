@@ -6,7 +6,7 @@
 
     <groupId>io.github.starlangsoftware</groupId>
     <artifactId>WordToVec</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>jar</packaging>
 
     <name>NlpToolkit.WordToVec</name>
@@ -59,7 +59,7 @@
         <dependency>
             <groupId>io.github.starlangsoftware</groupId>
             <artifactId>Math</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

@@ -29,7 +29,7 @@ public class NeuralNetwork {
         this.vocabulary = new Vocabulary(corpus);
         this.parameter = parameter;
         this.corpus = corpus;
-        wordVectors = new Matrix(vocabulary.size(), parameter.getLayerSize(), -0.5, 0.5);
+        wordVectors = new Matrix(vocabulary.size(), parameter.getLayerSize(), -0.5, 0.5, new Random());
         wordVectorUpdate = new Matrix(vocabulary.size(), parameter.getLayerSize());
         prepareExpTable();
     }
