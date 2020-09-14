@@ -1,6 +1,6 @@
 For Developers
 ============
-You can also see [Python](https://github.com/olcaytaner/WordToVec-Py), [C++](https://github.com/olcaytaner/WordToVec-CPP), [Swift](https://github.com/olcaytaner/WordToVec-Swift), or [C#](https://github.com/olcaytaner/WordToVec-CS) repository.
+You can also see [Python](https://github.com/starlangsoftware/WordToVec-Py), [C++](https://github.com/starlangsoftware/WordToVec-CPP), [Swift](https://github.com/starlangsoftware/WordToVec-Swift), or [C#](https://github.com/starlangsoftware/WordToVec-CS) repository.
 
 ## Requirements
 
