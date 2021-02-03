@@ -1,5 +1,6 @@
 For Developers
 ============
+
 You can also see [Python](https://github.com/starlangsoftware/WordToVec-Py), [C++](https://github.com/starlangsoftware/WordToVec-CPP), [Swift](https://github.com/starlangsoftware/WordToVec-Swift), or [C#](https://github.com/starlangsoftware/WordToVec-CS) repository.
 
 ## Requirements
@@ -80,3 +81,14 @@ Use below line to generate jar file:
             <artifactId>WordToVec</artifactId>
             <version>1.0.0</version>
         </dependency>
+
+Detailed Description
+============
+
+To initialize artificial neural network:
+
+	NeuralNetwork(Corpus corpus, WordToVecParameter parameter)
+
+To train neural network:
+
+	VectorizedDictionary train()
