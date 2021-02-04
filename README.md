@@ -1,7 +1,7 @@
 For Developers
 ============
 
-You can also see [Python](https://github.com/starlangsoftware/WordToVec-Py), [C++](https://github.com/starlangsoftware/WordToVec-CPP), [Swift](https://github.com/starlangsoftware/WordToVec-Swift), or [C#](https://github.com/starlangsoftware/WordToVec-CS) repository.
+You can also see [Python](https://github.com/starlangsoftware/WordToVec-Py), [Cython](https://github.com/starlangsoftware/WordToVec-Cy), [C++](https://github.com/starlangsoftware/WordToVec-CPP), [Swift](https://github.com/starlangsoftware/WordToVec-Swift), or [C#](https://github.com/starlangsoftware/WordToVec-CS) repository.
 
 ## Requirements
 
