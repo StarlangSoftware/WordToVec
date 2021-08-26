@@ -8,6 +8,7 @@ public class WordToVecParameter {
     private boolean hierarchicalSoftMax = false;
     private int negativeSamplingSize = 5;
     private int numberOfIterations = 3;
+    private int seed = 1;
 
     /**
      * Empty constructor for Word2Vec parameter
@@ -72,6 +73,14 @@ public class WordToVecParameter {
     }
 
     /**
+     * Accessor for the seed attribute.
+     * @return Seed to train the network.
+     */
+    public int getSeed() {
+        return seed;
+    }
+
+    /**
      * Mutator for the layerSize attribute.
      * @param layerSize New size of the word vectors.
      */
@@ -125,6 +134,14 @@ public class WordToVecParameter {
      */
     public void setNumberOfIterations(int numberOfIterations) {
         this.numberOfIterations = numberOfIterations;
+    }
+
+    /**
+     * Mutator for the seed attribute.
+     * @param seed New number of seed.
+     */
+    public void setSeed(int seed) {
+        this.seed = seed;
     }
 
 }

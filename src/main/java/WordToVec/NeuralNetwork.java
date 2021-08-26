@@ -29,7 +29,7 @@ public class NeuralNetwork {
         this.vocabulary = new Vocabulary(corpus);
         this.parameter = parameter;
         this.corpus = corpus;
-        wordVectors = new Matrix(vocabulary.size(), parameter.getLayerSize(), -0.5, 0.5, new Random());
+        wordVectors = new Matrix(vocabulary.size(), parameter.getLayerSize(), -0.5, 0.5, new Random(parameter.getSeed()));
         wordVectorUpdate = new Matrix(vocabulary.size(), parameter.getLayerSize());
         prepareExpTable();
     }
@@ -93,10 +93,10 @@ public class NeuralNetwork {
         double f, g;
         Sentence currentSentence = corpus.getSentence(iteration.getSentenceIndex());
         VocabularyWord currentWord;
-        Random random = new Random();
+        Random random = new Random(parameter.getSeed());
         Vector outputs = new Vector(parameter.getLayerSize(), 0);
         Vector outputUpdate = new Vector(parameter.getLayerSize(), 0);
-        corpus.shuffleSentences(1);
+        corpus.shuffleSentences(parameter.getSeed());
         while (iteration.getIterationCount() < parameter.getNumberOfIterations()) {
             iteration.alphaUpdate();
             wordIndex = vocabulary.getPosition(currentSentence.getWord(iteration.getSentencePosition()));
@@ -170,10 +170,10 @@ public class NeuralNetwork {
         double f, g;
         Sentence currentSentence = corpus.getSentence(iteration.getSentenceIndex());
         VocabularyWord currentWord;
-        Random random = new Random();
+        Random random = new Random(parameter.getSeed());
         Vector outputs = new Vector(parameter.getLayerSize(), 0);
         Vector outputUpdate = new Vector(parameter.getLayerSize(), 0);
-        corpus.shuffleSentences(1);
+        corpus.shuffleSentences(parameter.getSeed());
         while (iteration.getIterationCount() < parameter.getNumberOfIterations()) {
             iteration.alphaUpdate();
             wordIndex = vocabulary.getPosition(currentSentence.getWord(iteration.getSentencePosition()));
