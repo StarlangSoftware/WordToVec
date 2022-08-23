@@ -17,7 +17,7 @@ Class Diagram
 Video Lectures
 ============
 
-[<img src=video1.jpg width="50%">](https://youtu.be/7zaTW8dH_QMc)[<img src=video2.jpg width="50%">](https://youtu.be/4YvBJ_p8HRc)
+[<img src=video1.jpg width="50%">](https://youtu.be/7zaTW8dH_QMc)[<img src=video2.jpg width="50%">](https://youtu.be/4YvBJ_p8HRc)[<img src=video3.jpg width="50%">](https://youtu.be/Hh-MM_rSWeo)
 
 For Developers
 ============
