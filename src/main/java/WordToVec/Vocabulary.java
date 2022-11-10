@@ -2,15 +2,17 @@ package WordToVec;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Set;
 
-import Corpus.Corpus;
+import Corpus.CorpusStream;
+import Corpus.Sentence;
+import DataStructure.CounterHashMap;
 import Dictionary.TurkishWordComparator;
 import Dictionary.Word;
 
 public class Vocabulary {
     private ArrayList<VocabularyWord> vocabulary;
     private int[] table;
+    private int totalNumberOfWords = 0;
 
     /**
      * Constructor for the {@link Vocabulary} class. For each distinct word in the corpus, a {@link VocabularyWord}
@@ -18,12 +20,21 @@ public class Vocabulary {
      * where after Huffman tree is created based on the number of occurrences of the words.
      * @param corpus Corpus used to train word vectors using Word2Vec algorithm.
      */
-    public Vocabulary(Corpus corpus){
-        Set<Word> wordList;
-        wordList = corpus.getWordList();
+    public Vocabulary(CorpusStream corpus){
+        CounterHashMap<String> counts = new CounterHashMap<>();
+        corpus.open();
+        Sentence sentence = corpus.getSentence();
+        while (sentence != null){
+            for (int i = 0; i < sentence.wordCount(); i++){
+                counts.put(sentence.getWord(i).getName());
+            }
+            totalNumberOfWords += sentence.wordCount();
+            sentence = corpus.getSentence();
+        }
+        corpus.close();
         vocabulary = new ArrayList<>();
-        for (Word word: wordList){
-            vocabulary.add(new VocabularyWord(word.getName(), corpus.getCount(word)));
+        for (String word : counts.keySet()){
+            vocabulary.add(new VocabularyWord(word, counts.get(word)));
         }
         Collections.sort(vocabulary);
         createUniGramTable();
@@ -46,6 +57,10 @@ public class Vocabulary {
      */
     public int getPosition(Word word){
         return Collections.binarySearch(vocabulary, word, new TurkishWordComparator());
+    }
+
+    public int getTotalNumberOfWords(){
+        return totalNumberOfWords;
     }
 
     /**

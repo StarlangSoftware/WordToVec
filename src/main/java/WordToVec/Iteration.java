@@ -1,15 +1,15 @@
 package WordToVec;
 
-import Corpus.Corpus;
+import Corpus.CorpusStream;
 import Corpus.Sentence;
 
 public class Iteration {
     private int wordCount = 0, lastWordCount = 0, wordCountActual = 0;
     private int iterationCount = 0;
-    private int sentencePosition = 0, sentenceIndex = 0;
+    private int sentencePosition = 0;
     private double startingAlpha;
     private double alpha;
-    private Corpus corpus;
+    private CorpusStream corpus;
     private WordToVecParameter wordToVecParameter;
 
     /**
@@ -18,7 +18,7 @@ public class Iteration {
      * @param corpus Corpus used to train word vectors using Word2Vec algorithm.
      * @param wordToVecParameter Parameters of the Word2Vec algorithm.
      */
-    public Iteration(Corpus corpus, WordToVecParameter wordToVecParameter){
+    public Iteration(CorpusStream corpus, WordToVecParameter wordToVecParameter){
         this.corpus = corpus;
         this.wordToVecParameter = wordToVecParameter;
         startingAlpha = wordToVecParameter.getAlpha();
@@ -41,13 +41,6 @@ public class Iteration {
         return iterationCount;
     }
 
-    /**
-     * Accessor for the sentenceIndex attribute.
-     * @return SentenceIndex attribute
-     */
-    public int getSentenceIndex() {
-        return sentenceIndex;
-    }
 
     /**
      * Accessor for the sentencePosition attribute.
@@ -60,11 +53,11 @@ public class Iteration {
     /**
      * Updates the alpha parameter after 10000 words has been processed.
      */
-    public void alphaUpdate(){
+    public void alphaUpdate(int totalNumberOfWords){
         if (wordCount - lastWordCount > 10000) {
             wordCountActual += wordCount - lastWordCount;
             lastWordCount = wordCount;
-            alpha = startingAlpha * (1 - wordCountActual / (wordToVecParameter.getNumberOfIterations() * corpus.numberOfWords() + 1.0));
+            alpha = startingAlpha * (1 - wordCountActual / (wordToVecParameter.getNumberOfIterations() * totalNumberOfWords + 1.0));
             if (alpha < startingAlpha * 0.0001)
                 alpha = startingAlpha * 0.0001;
         }
@@ -82,16 +75,17 @@ public class Iteration {
         sentencePosition++;
         if (sentencePosition >= currentSentence.wordCount()) {
             wordCount += currentSentence.wordCount();
-            sentenceIndex++;
             sentencePosition = 0;
-            if (sentenceIndex == corpus.sentenceCount()){
+            Sentence sentence = corpus.getSentence();
+            if (sentence == null){
                 iterationCount++;
                 wordCount = 0;
                 lastWordCount = 0;
-                sentenceIndex = 0;
-                corpus.shuffleSentences(1);
+                corpus.close();
+                corpus.open();
+                sentence = corpus.getSentence();
             }
-            return corpus.getSentence(sentenceIndex);
+            return sentence;
         }
         return currentSentence;
     }

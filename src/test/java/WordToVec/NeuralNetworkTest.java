@@ -1,21 +1,21 @@
 package WordToVec;
 
-import Corpus.Corpus;
+import Corpus.CorpusStream;
 import Dictionary.VectorizedDictionary;
 import Math.*;
 import org.junit.Before;
 
 public class NeuralNetworkTest {
 
-    Corpus turkish, english;
+    CorpusStream turkish, english;
 
     @Before
     public void setUp() {
-        english = new Corpus("english-similarity-dataset.txt");
-        turkish = new Corpus("turkish-similarity-dataset.txt");
+        english = new CorpusStream("english-similarity-dataset.txt");
+        turkish = new CorpusStream("turkish-similarity-dataset.txt");
     }
 
-    private VectorizedDictionary train(Corpus corpus, boolean cBow){
+    private VectorizedDictionary train(CorpusStream corpus, boolean cBow){
         WordToVecParameter parameter = new WordToVecParameter();
         parameter.setCbow(cBow);
         NeuralNetwork neuralNetwork = new NeuralNetwork(corpus, parameter);

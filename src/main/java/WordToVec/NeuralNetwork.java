@@ -4,7 +4,7 @@ import Dictionary.TurkishWordComparator;
 import Dictionary.VectorizedDictionary;
 import Dictionary.VectorizedWord;
 import Math.*;
-import Corpus.Corpus;
+import Corpus.CorpusStream;
 import Corpus.Sentence;
 
 import java.util.Random;
@@ -13,7 +13,7 @@ public class NeuralNetwork {
     private Matrix wordVectors, wordVectorUpdate;
     private Vocabulary vocabulary;
     private WordToVecParameter parameter;
-    private Corpus corpus;
+    private CorpusStream corpus;
     private double[] expTable;
     private static int EXP_TABLE_SIZE = 1000;
     private static int MAX_EXP = 6;
@@ -25,7 +25,7 @@ public class NeuralNetwork {
      * @param corpus Corpus used to train word vectors using Word2Vec algorithm.
      * @param parameter Parameters of the Word2Vec algorithm.
      */
-    public NeuralNetwork(Corpus corpus, WordToVecParameter parameter){
+    public NeuralNetwork(CorpusStream corpus, WordToVecParameter parameter){
         this.vocabulary = new Vocabulary(corpus);
         this.parameter = parameter;
         this.corpus = corpus;
@@ -91,14 +91,14 @@ public class NeuralNetwork {
         Iteration iteration = new Iteration(corpus, parameter);
         int target, label, l2, b, cw;
         double f, g;
-        Sentence currentSentence = corpus.getSentence(iteration.getSentenceIndex());
+        corpus.open();
+        Sentence currentSentence = corpus.getSentence();
         VocabularyWord currentWord;
         Random random = new Random(parameter.getSeed());
         Vector outputs = new Vector(parameter.getLayerSize(), 0);
         Vector outputUpdate = new Vector(parameter.getLayerSize(), 0);
-        corpus.shuffleSentences(parameter.getSeed());
         while (iteration.getIterationCount() < parameter.getNumberOfIterations()) {
-            iteration.alphaUpdate();
+            iteration.alphaUpdate(vocabulary.getTotalNumberOfWords());
             wordIndex = vocabulary.getPosition(currentSentence.getWord(iteration.getSentencePosition()));
             currentWord = vocabulary.getWord(wordIndex);
             outputs.clear();
@@ -158,6 +158,7 @@ public class NeuralNetwork {
             }
             currentSentence = iteration.sentenceUpdate(currentSentence);
         }
+        corpus.close();
     }
 
     /**
@@ -168,14 +169,14 @@ public class NeuralNetwork {
         Iteration iteration = new Iteration(corpus, parameter);
         int target, label, l1, l2, b;
         double f, g;
-        Sentence currentSentence = corpus.getSentence(iteration.getSentenceIndex());
+        corpus.open();
+        Sentence currentSentence = corpus.getSentence();
         VocabularyWord currentWord;
         Random random = new Random(parameter.getSeed());
         Vector outputs = new Vector(parameter.getLayerSize(), 0);
         Vector outputUpdate = new Vector(parameter.getLayerSize(), 0);
-        corpus.shuffleSentences(parameter.getSeed());
         while (iteration.getIterationCount() < parameter.getNumberOfIterations()) {
-            iteration.alphaUpdate();
+            iteration.alphaUpdate(vocabulary.getTotalNumberOfWords());
             wordIndex = vocabulary.getPosition(currentSentence.getWord(iteration.getSentencePosition()));
             currentWord = vocabulary.getWord(wordIndex);
             outputs.clear();
@@ -225,6 +226,7 @@ public class NeuralNetwork {
             }
             currentSentence = iteration.sentenceUpdate(currentSentence);
         }
+        corpus.close();
     }
 
 }
