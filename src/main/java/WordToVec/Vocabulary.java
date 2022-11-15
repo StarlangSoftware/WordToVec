@@ -3,7 +3,7 @@ package WordToVec;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import Corpus.CorpusStream;
+import Corpus.AbstractCorpus;
 import Corpus.Sentence;
 import DataStructure.CounterHashMap;
 import Dictionary.TurkishWordComparator;
@@ -20,7 +20,7 @@ public class Vocabulary {
      * where after Huffman tree is created based on the number of occurrences of the words.
      * @param corpus Corpus used to train word vectors using Word2Vec algorithm.
      */
-    public Vocabulary(CorpusStream corpus){
+    public Vocabulary(AbstractCorpus corpus){
         CounterHashMap<String> counts = new CounterHashMap<>();
         corpus.open();
         Sentence sentence = corpus.getSentence();

@@ -1,24 +1,34 @@
 package WordToVec;
 
-import Corpus.CorpusStream;
+import Corpus.Corpus;
+import Corpus.AbstractCorpus;
 import Dictionary.VectorizedDictionary;
 import Math.*;
 import org.junit.Before;
 
 public class NeuralNetworkTest {
 
-    CorpusStream turkish, english;
+    AbstractCorpus turkish, english;
+    SemanticDataSet mc, rg, ws, av, men, mturk, rare;
 
     @Before
     public void setUp() {
-        english = new CorpusStream("english-similarity-dataset.txt");
-        turkish = new CorpusStream("turkish-similarity-dataset.txt");
+        english = new Corpus("/Users/olcay/corpus/english2.txt");
+        turkish = new Corpus("/Users/olcay/corpus/turkish2.txt");
+        mc = new SemanticDataSet("MC.txt");
+        rg = new SemanticDataSet("RG.txt");
+        ws = new SemanticDataSet("WS353.txt");
+        men = new SemanticDataSet("MEN.txt");
+        mturk = new SemanticDataSet("MTurk771.txt");
+        rare = new SemanticDataSet("RareWords.txt");
+        av = new SemanticDataSet("AnlamverRel.txt");
     }
 
-    private VectorizedDictionary train(CorpusStream corpus, boolean cBow){
+    private VectorizedDictionary train(AbstractCorpus corpus, boolean cBow){
         WordToVecParameter parameter = new WordToVecParameter();
         parameter.setCbow(cBow);
         NeuralNetwork neuralNetwork = new NeuralNetwork(corpus, parameter);
+        System.out.println(neuralNetwork.vocabularySize());
         try {
             return neuralNetwork.train();
         } catch (MatrixColumnMismatch | VectorSizeMismatch ignored) {
@@ -29,21 +39,49 @@ public class NeuralNetworkTest {
     @org.junit.Test
     public void testTrainEnglishCBow() throws VectorSizeMismatch {
         VectorizedDictionary dictionary = train(english, true);
+        SemanticDataSet mc2 = mc.calculateSimilarities(dictionary);
+        System.out.println("(" + mc.size() + ") " + mc.spearmanCorrelation(mc2));
+        SemanticDataSet rg2 = rg.calculateSimilarities(dictionary);
+        System.out.println("(" + rg.size() + ") " + rg.spearmanCorrelation(rg2));
+        SemanticDataSet ws2 = ws.calculateSimilarities(dictionary);
+        System.out.println("(" + ws.size() + ") " + ws.spearmanCorrelation(ws2));
+        SemanticDataSet men2 = men.calculateSimilarities(dictionary);
+        System.out.println("(" + men.size() + ") " + men.spearmanCorrelation(men2));
+        SemanticDataSet mturk2 = mturk.calculateSimilarities(dictionary);
+        System.out.println("(" + mturk.size() + ") " + mturk.spearmanCorrelation(mturk2));
+        SemanticDataSet rare2 = rare.calculateSimilarities(dictionary);
+        System.out.println("(" + rare.size() + ") " + rare.spearmanCorrelation(rare2));
     }
 
     @org.junit.Test
     public void testTrainEnglishSkipGram() {
         VectorizedDictionary dictionary = train(english, false);
+        SemanticDataSet mc2 = mc.calculateSimilarities(dictionary);
+        System.out.println("(" + mc.size() + ") " + mc.spearmanCorrelation(mc2));
+        SemanticDataSet rg2 = rg.calculateSimilarities(dictionary);
+        System.out.println("(" + rg.size() + ") " + rg.spearmanCorrelation(rg2));
+        SemanticDataSet ws2 = ws.calculateSimilarities(dictionary);
+        System.out.println("(" + ws.size() + ") " + ws.spearmanCorrelation(ws2));
+        SemanticDataSet men2 = men.calculateSimilarities(dictionary);
+        System.out.println("(" + men.size() + ") " + men.spearmanCorrelation(men2));
+        SemanticDataSet mturk2 = mturk.calculateSimilarities(dictionary);
+        System.out.println("(" + mturk.size() + ") " + mturk.spearmanCorrelation(mturk2));
+        SemanticDataSet rare2 = rare.calculateSimilarities(dictionary);
+        System.out.println("(" + rare.size() + ") " + rare.spearmanCorrelation(rare2));
     }
 
     @org.junit.Test
     public void testTrainTurkishCBow() {
         VectorizedDictionary dictionary = train(turkish, true);
+        SemanticDataSet av2 = av.calculateSimilarities(dictionary);
+        System.out.println("(" + av.size() + ") " + av.spearmanCorrelation(av2));
     }
 
     @org.junit.Test
     public void testTrainTurkishSkipGram() {
         VectorizedDictionary dictionary = train(turkish, false);
+        SemanticDataSet av2 = av.calculateSimilarities(dictionary);
+        System.out.println("(" + av.size() + ") " + av.spearmanCorrelation(av2));
     }
 
 }

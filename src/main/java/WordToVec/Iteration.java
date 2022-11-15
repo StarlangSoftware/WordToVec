@@ -1,6 +1,7 @@
 package WordToVec;
 
-import Corpus.CorpusStream;
+import Corpus.AbstractCorpus;
+import Corpus.Corpus;
 import Corpus.Sentence;
 
 public class Iteration {
@@ -9,7 +10,7 @@ public class Iteration {
     private int sentencePosition = 0;
     private double startingAlpha;
     private double alpha;
-    private CorpusStream corpus;
+    private AbstractCorpus corpus;
     private WordToVecParameter wordToVecParameter;
 
     /**
@@ -18,7 +19,7 @@ public class Iteration {
      * @param corpus Corpus used to train word vectors using Word2Vec algorithm.
      * @param wordToVecParameter Parameters of the Word2Vec algorithm.
      */
-    public Iteration(CorpusStream corpus, WordToVecParameter wordToVecParameter){
+    public Iteration(AbstractCorpus corpus, WordToVecParameter wordToVecParameter){
         this.corpus = corpus;
         this.wordToVecParameter = wordToVecParameter;
         startingAlpha = wordToVecParameter.getAlpha();
@@ -56,6 +57,7 @@ public class Iteration {
     public void alphaUpdate(int totalNumberOfWords){
         if (wordCount - lastWordCount > 10000) {
             wordCountActual += wordCount - lastWordCount;
+            System.out.println(wordCountActual);
             lastWordCount = wordCount;
             alpha = startingAlpha * (1 - wordCountActual / (wordToVecParameter.getNumberOfIterations() * totalNumberOfWords + 1.0));
             if (alpha < startingAlpha * 0.0001)

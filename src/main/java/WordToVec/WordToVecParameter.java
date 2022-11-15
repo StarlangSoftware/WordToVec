@@ -7,7 +7,7 @@ public class WordToVecParameter {
     private int window = 5;
     private boolean hierarchicalSoftMax = false;
     private int negativeSamplingSize = 5;
-    private int numberOfIterations = 3;
+    private int numberOfIterations = 2;
     private int seed = 1;
 
     /**
