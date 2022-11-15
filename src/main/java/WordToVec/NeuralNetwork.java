@@ -212,7 +212,7 @@ public class NeuralNetwork {
         Sentence currentSentence = corpus.getSentence();
         VocabularyWord currentWord;
         Random random = new Random(parameter.getSeed());
-        double[] outputUpdate = new double[parameter.getLayerSize()];
+        double[] outputUpdate = new double[vectorLength];
         while (iteration.getIterationCount() < parameter.getNumberOfIterations()) {
             iteration.alphaUpdate(vocabulary.getTotalNumberOfWords());
             wordIndex = vocabulary.getPosition(currentSentence.getWord(iteration.getSentencePosition()));

@@ -33,18 +33,15 @@ public class SemanticDataSet {
             String word2 = pairs.get(i).getWord2();
             VectorizedWord vectorizedWord1 = (VectorizedWord) dictionary.getWord(word1);
             VectorizedWord vectorizedWord2 = (VectorizedWord) dictionary.getWord(word2);
-            similarity = 0;
             try{
                 if (vectorizedWord1 != null && vectorizedWord2 != null){
                     similarity = vectorizedWord1.getVector().cosineSimilarity(vectorizedWord2.getVector());
+                    result.pairs.add(new WordPair(word1, word2, similarity));
+                } else {
+                    pairs.remove(i);
+                    i--;
                 }
             } catch (VectorSizeMismatch ignored){
-            }
-            if (similarity > 0){
-                result.pairs.add(new WordPair(word1, word2, similarity));
-            } else {
-                pairs.remove(i);
-                i--;
             }
         }
         return result;
