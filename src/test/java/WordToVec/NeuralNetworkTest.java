@@ -37,7 +37,7 @@ public class NeuralNetworkTest {
     }
 
     @org.junit.Test
-    public void testTrainEnglishCBow() throws VectorSizeMismatch {
+    public void testTrainEnglishCBow() {
         VectorizedDictionary dictionary = train(english, true);
         SemanticDataSet mc2 = mc.calculateSimilarities(dictionary);
         System.out.println("(" + mc.size() + ") " + mc.spearmanCorrelation(mc2));
