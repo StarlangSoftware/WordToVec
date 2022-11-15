@@ -13,8 +13,8 @@ public class NeuralNetworkTest {
 
     @Before
     public void setUp() {
-        english = new Corpus("/Users/olcay/corpus/english2.txt");
-        turkish = new Corpus("/Users/olcay/corpus/turkish2.txt");
+        english = new Corpus("english-xs.txt");
+        turkish = new Corpus("turkish-xs.txt");
         mc = new SemanticDataSet("MC.txt");
         rg = new SemanticDataSet("RG.txt");
         ws = new SemanticDataSet("WS353.txt");

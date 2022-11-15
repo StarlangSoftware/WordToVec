@@ -1,7 +1,6 @@
 package WordToVec;
 
 import Corpus.AbstractCorpus;
-import Corpus.Corpus;
 import Corpus.Sentence;
 
 public class Iteration {
