@@ -2,6 +2,7 @@ package WordToVec;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import Corpus.AbstractCorpus;
 import Corpus.Sentence;
@@ -11,6 +12,7 @@ import Dictionary.Word;
 
 public class Vocabulary {
     private ArrayList<VocabularyWord> vocabulary;
+    private HashMap<String, Integer> wordMap;
     private int[] table;
     private int totalNumberOfWords = 0;
 
@@ -21,6 +23,7 @@ public class Vocabulary {
      * @param corpus Corpus used to train word vectors using Word2Vec algorithm.
      */
     public Vocabulary(AbstractCorpus corpus){
+        wordMap = new HashMap<>();
         CounterHashMap<String> counts = new CounterHashMap<>();
         corpus.open();
         Sentence sentence = corpus.getSentence();
@@ -39,7 +42,9 @@ public class Vocabulary {
         Collections.sort(vocabulary);
         createUniGramTable();
         constructHuffmanTree();
-        Collections.sort(vocabulary, new TurkishWordComparator());
+        for (int i = 0; i < vocabulary.size(); i++){
+            wordMap.put(vocabulary.get(i).getName(), i);
+        }
     }
 
     /**
@@ -56,7 +61,7 @@ public class Vocabulary {
      * @return Position of the word searched.
      */
     public int getPosition(Word word){
-        return Collections.binarySearch(vocabulary, word, new TurkishWordComparator());
+        return wordMap.get(word.getName());
     }
 
     public int getTotalNumberOfWords(){
