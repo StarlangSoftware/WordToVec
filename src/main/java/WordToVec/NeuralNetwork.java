@@ -46,7 +46,7 @@ public class NeuralNetwork {
     }
 
     public int vocabularySize(){
-        return vocabulary.getTableSize();
+        return vocabulary.size();
     }
 
     /**
