@@ -56,7 +56,6 @@ public class Iteration {
     public void alphaUpdate(int totalNumberOfWords){
         if (wordCount - lastWordCount > 10000) {
             wordCountActual += wordCount - lastWordCount;
-            System.out.println(wordCountActual);
             lastWordCount = wordCount;
             alpha = startingAlpha * (1 - wordCountActual / (wordToVecParameter.getNumberOfIterations() * totalNumberOfWords + 1.0));
             if (alpha < startingAlpha * 0.0001)
@@ -80,6 +79,7 @@ public class Iteration {
             Sentence sentence = corpus.getSentence();
             if (sentence == null){
                 iterationCount++;
+                System.out.println("Iteration " + iterationCount);
                 wordCount = 0;
                 lastWordCount = 0;
                 corpus.close();

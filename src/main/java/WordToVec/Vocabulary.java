@@ -42,6 +42,7 @@ public class Vocabulary {
         Collections.sort(vocabulary);
         createUniGramTable();
         constructHuffmanTree();
+        Collections.sort(vocabulary, new TurkishWordComparator());
         for (int i = 0; i < vocabulary.size(); i++){
             wordMap.put(vocabulary.get(i).getName(), i);
         }

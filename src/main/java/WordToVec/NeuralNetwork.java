@@ -80,7 +80,6 @@ public class NeuralNetwork {
             }
             result.addWord(new VectorizedWord(vocabulary.getWord(i).getName(), vector));
         }
-        result.sort();
         return result;
     }
 
