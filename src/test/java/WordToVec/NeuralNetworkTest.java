@@ -2,6 +2,7 @@ package WordToVec;
 
 import Corpus.Corpus;
 import Corpus.AbstractCorpus;
+import Dictionary.TurkishWordComparator;
 import Dictionary.VectorizedDictionary;
 import Math.*;
 import org.junit.Before;
@@ -39,6 +40,22 @@ public class NeuralNetworkTest {
     @org.junit.Test
     public void testTrainEnglishCBow() {
         VectorizedDictionary dictionary = train(english, true);
+        SemanticDataSet mc2 = mc.calculateSimilarities(dictionary);
+        System.out.println("(" + mc.size() + ") " + mc.spearmanCorrelation(mc2));
+        SemanticDataSet rg2 = rg.calculateSimilarities(dictionary);
+        System.out.println("(" + rg.size() + ") " + rg.spearmanCorrelation(rg2));
+        SemanticDataSet ws2 = ws.calculateSimilarities(dictionary);
+        System.out.println("(" + ws.size() + ") " + ws.spearmanCorrelation(ws2));
+        SemanticDataSet men2 = men.calculateSimilarities(dictionary);
+        System.out.println("(" + men.size() + ") " + men.spearmanCorrelation(men2));
+        SemanticDataSet mturk2 = mturk.calculateSimilarities(dictionary);
+        System.out.println("(" + mturk.size() + ") " + mturk.spearmanCorrelation(mturk2));
+        SemanticDataSet rare2 = rare.calculateSimilarities(dictionary);
+        System.out.println("(" + rare.size() + ") " + rare.spearmanCorrelation(rare2));
+    }
+    @org.junit.Test
+    public void testTrainEnglishCBow2() {
+        VectorizedDictionary dictionary = new VectorizedDictionary("/Users/olcay/corpus/vectors-english-xs.txt", new TurkishWordComparator());
         SemanticDataSet mc2 = mc.calculateSimilarities(dictionary);
         System.out.println("(" + mc.size() + ") " + mc.spearmanCorrelation(mc2));
         SemanticDataSet rg2 = rg.calculateSimilarities(dictionary);
