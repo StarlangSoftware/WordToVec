@@ -54,8 +54,9 @@ public class NeuralNetworkTest {
         System.out.println("(" + rare.size() + ") " + rare.spearmanCorrelation(rare2));
     }
     @org.junit.Test
-    public void testTrainEnglishCBow2() {
+    public void testWithWordVectors() {
         VectorizedDictionary dictionary = new VectorizedDictionary("/Users/olcay/corpus/vectors-english-xs.txt", new TurkishWordComparator());
+        System.out.println(dictionary.size());
         SemanticDataSet mc2 = mc.calculateSimilarities(dictionary);
         System.out.println("(" + mc.size() + ") " + mc.spearmanCorrelation(mc2));
         SemanticDataSet rg2 = rg.calculateSimilarities(dictionary);
