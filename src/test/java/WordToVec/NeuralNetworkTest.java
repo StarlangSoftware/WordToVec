@@ -55,7 +55,7 @@ public class NeuralNetworkTest {
     }
     @org.junit.Test
     public void testWithWordVectors() {
-        VectorizedDictionary dictionary = new VectorizedDictionary("/Users/olcay/corpus/vectors-english-xs.txt", new TurkishWordComparator());
+        VectorizedDictionary dictionary = new VectorizedDictionary("vectors-english-xs.txt", new TurkishWordComparator());
         System.out.println(dictionary.size());
         SemanticDataSet mc2 = mc.calculateSimilarities(dictionary);
         System.out.println("(" + mc.size() + ") " + mc.spearmanCorrelation(mc2));
