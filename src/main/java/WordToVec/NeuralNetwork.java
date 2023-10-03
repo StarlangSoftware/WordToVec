@@ -56,8 +56,8 @@ public class NeuralNetwork {
     private void prepareExpTable(){
         expTable = new double[EXP_TABLE_SIZE + 1];
         for (int i = 0; i < EXP_TABLE_SIZE; i++) {
-            expTable[i] = Math.exp((i / (EXP_TABLE_SIZE + 0.0) * 2 - 1) * MAX_EXP);
-            expTable[i] = expTable[i] / (expTable[i] + 1);
+            double value = Math.exp((i / (EXP_TABLE_SIZE + 0.0) * 2 - 1) * MAX_EXP);
+            expTable[i] = value / (value + 1);
         }
     }
 
