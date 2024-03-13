@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class SemanticDataSet {
 
-    private ArrayList<WordPair> pairs;
+    private final ArrayList<WordPair> pairs;
 
     public SemanticDataSet(){
         pairs = new ArrayList<>();

@@ -11,10 +11,11 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class NeuralNetwork {
-    private double[][] wordVectors, wordVectorUpdate;
-    private Vocabulary vocabulary;
-    private WordToVecParameter parameter;
-    private AbstractCorpus corpus;
+    private final double[][] wordVectors;
+    private final double[][] wordVectorUpdate;
+    private final Vocabulary vocabulary;
+    private final WordToVecParameter parameter;
+    private final AbstractCorpus corpus;
     private double[] expTable;
     private static final int EXP_TABLE_SIZE = 1000;
     private static final int MAX_EXP = 6;

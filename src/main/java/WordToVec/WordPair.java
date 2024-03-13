@@ -1,10 +1,8 @@
 package WordToVec;
 
-import Dictionary.Word;
-
 public class WordPair{
-    private String word1;
-    private String word2;
+    private final String word1;
+    private final String word2;
     private double relatedBy;
 
     public WordPair(String word1, String word2, double relatedBy) {

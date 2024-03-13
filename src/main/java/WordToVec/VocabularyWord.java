@@ -3,9 +3,9 @@ package WordToVec;
 import Dictionary.Word;
 
 public class VocabularyWord extends Word implements Comparable{
-    private int count;
-    private int[] code;
-    private int[] point;
+    private final int count;
+    private final int[] code;
+    private final int[] point;
     public static int MAX_CODE_LENGTH = 40;
     private int codeLength;
 

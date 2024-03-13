@@ -11,8 +11,8 @@ import Dictionary.TurkishWordComparator;
 import Dictionary.Word;
 
 public class Vocabulary {
-    private ArrayList<VocabularyWord> vocabulary;
-    private HashMap<String, Integer> wordMap;
+    private final ArrayList<VocabularyWord> vocabulary;
+    private final HashMap<String, Integer> wordMap;
     private int[] table;
     private int totalNumberOfWords = 0;
 
@@ -42,7 +42,7 @@ public class Vocabulary {
         Collections.sort(vocabulary);
         createUniGramTable();
         constructHuffmanTree();
-        Collections.sort(vocabulary, new TurkishWordComparator());
+        vocabulary.sort(new TurkishWordComparator());
         for (int i = 0; i < vocabulary.size(); i++){
             wordMap.put(vocabulary.get(i).getName(), i);
         }

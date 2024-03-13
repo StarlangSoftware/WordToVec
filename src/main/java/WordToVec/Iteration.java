@@ -7,10 +7,10 @@ public class Iteration {
     private int wordCount = 0, lastWordCount = 0, wordCountActual = 0;
     private int iterationCount = 0;
     private int sentencePosition = 0;
-    private double startingAlpha;
+    private final double startingAlpha;
     private double alpha;
-    private AbstractCorpus corpus;
-    private WordToVecParameter wordToVecParameter;
+    private final AbstractCorpus corpus;
+    private final WordToVecParameter wordToVecParameter;
 
     /**
      * Constructor for the {@link Iteration} class. Get corpus and parameter as input, sets the corresponding
