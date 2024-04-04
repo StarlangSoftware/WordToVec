@@ -101,7 +101,7 @@ Use below line to generate jar file:
         <dependency>
             <groupId>io.github.starlangsoftware</groupId>
             <artifactId>WordToVec</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.8</version>
         </dependency>
 
 Detailed Description
