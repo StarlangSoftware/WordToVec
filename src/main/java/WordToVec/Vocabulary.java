@@ -65,6 +65,10 @@ public class Vocabulary {
         return wordMap.get(word.getName());
     }
 
+    /**
+     * Accessor for the total number of words
+     * @return Total number of words
+     */
     public int getTotalNumberOfWords(){
         return totalNumberOfWords;
     }
