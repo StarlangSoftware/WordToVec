@@ -12,9 +12,17 @@ public class SemanticDataSet {
 
     private final ArrayList<WordPair> pairs;
 
+    /**
+     * Empty constructor for the semantic dataset.
+     */
     public SemanticDataSet(){
         pairs = new ArrayList<>();
     }
+
+    /**
+     * Constructor for the semantic dataset. Reads word pairs and their similarity scores from an input file.
+     * @param fileName Input file that stores the word pair and similarity scores.
+     */
     public SemanticDataSet(String fileName){
         pairs = new ArrayList<>();
         Scanner scanner = new Scanner(FileUtils.getInputStream(fileName));
@@ -25,6 +33,12 @@ public class SemanticDataSet {
         }
     }
 
+    /**
+     * Calculates the similarities between words in the dataset. The word vectors will be taken from the input
+     * vectorized dictionary.
+     * @param dictionary Vectorized dictionary that stores the word vectors.
+     * @return Word pairs and their calculated similarities stored as a semantic dataset.
+     */
     public SemanticDataSet calculateSimilarities(VectorizedDictionary dictionary) {
         SemanticDataSet result = new SemanticDataSet();
         double similarity;
@@ -47,14 +61,27 @@ public class SemanticDataSet {
         return result;
     }
 
+    /**
+     * Returns the size of the semantic dataset.
+     * @return The size of the semantic dataset.
+     */
     public int size(){
         return pairs.size();
     }
 
+    /**
+     * Sorts the word pairs in the dataset according to the WordPairComparator.
+     */
     private void sort(){
         pairs.sort(new WordPairComparator());
     }
 
+    /**
+     * Finds and returns the index of a word pair in the pairs array list. If there is no such word pair, it
+     * returns -1.
+     * @param wordPair Word pair to search in the semantic dataset.
+     * @return Index of the given word pair in the pairs array list. If it does not exist, the method returns -1.
+     */
     public int index(WordPair wordPair){
         for (int i = 0; i < pairs.size(); i++){
             if (wordPair.equals(pairs.get(i))){
@@ -64,6 +91,11 @@ public class SemanticDataSet {
         return -1;
     }
 
+    /**
+     * Calculates the Spearman correlation coefficient with this dataset to the given semantic dataset.
+     * @param semanticDataSet Given semantic dataset with which Spearman correlation coefficient is calculated.
+     * @return Spearman correlation coefficient with the given semantic dataset.
+     */
     public double spearmanCorrelation(SemanticDataSet semanticDataSet){
         double sum = 0;
         int rank1, rank2;
